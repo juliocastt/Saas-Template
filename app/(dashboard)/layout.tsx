@@ -22,7 +22,7 @@ import {
 
 const navLinks = [
   { href: "/", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/usuarios", icon: Users, label: "Usuarios" },
+  { href: "/Usuarios", icon: Users, label: "Usuarios" },
   { href: "/billing", icon: CreditCard, label: "Billing" },
   { href: "/settings", icon: Settings, label: "Configuración" },
 ]
