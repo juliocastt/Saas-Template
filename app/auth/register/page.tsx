@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
-import { Eye, EyeOff } from "lucide-react"
+import { Eye, EyeOff, Check, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -11,33 +11,43 @@ import { Checkbox } from "@/components/ui/checkbox"
 
 const QUOTES = [
   {
-    text: "The most complete admin panel for your SaaS. Manage users, analyze metrics, and scale your business with confidence.",
+    text: "Join thousands of teams already using NovaUI to ship faster, collaborate better, and grow with confidence.",
     initials: "N",
     name: "NovaUI Dashboard",
     role: "Admin Template",
   },
   {
-    text: "Built for teams that move fast. NovaUI gives you real-time insights and a workflow that keeps everyone aligned.",
-    initials: "SR",
-    name: "Sarah R.",
-    role: "Head of Product, Helix",
+    text: "Setting up took less than five minutes. By the end of the day, our whole team was on board and loving it.",
+    initials: "PK",
+    name: "Paula K.",
+    role: "Operations Manager, Flux",
   },
   {
-    text: "We cut onboarding time in half. The interface is intuitive enough that new hires are productive on day one.",
-    initials: "JM",
-    name: "James M.",
-    role: "Engineering Lead, Orbit",
+    text: "NovaUI replaced three separate tools for us. One platform, one source of truth, zero headaches.",
+    initials: "DT",
+    name: "David T.",
+    role: "Co-founder, Meridian",
   },
   {
-    text: "NovaUI handles the complexity so your team doesn't have to. Clean data, clear decisions, zero guesswork.",
-    initials: "AL",
-    name: "Ana L.",
-    role: "CTO, Vanta Labs",
+    text: "The onboarding experience was so smooth we barely needed docs. Everything just made sense from the start.",
+    initials: "MO",
+    name: "Mia O.",
+    role: "Product Designer, Crest",
   },
 ]
 
-export default function Login() {
+const PASSWORD_RULES = [
+  { label: "At least 8 characters", test: (v: string) => v.length >= 8 },
+  { label: "One uppercase letter", test: (v: string) => /[A-Z]/.test(v) },
+  { label: "One number", test: (v: string) => /\d/.test(v) },
+  { label: "One special character", test: (v: string) => /[^A-Za-z0-9]/.test(v) },
+]
+
+export default function Register() {
   const [showPassword, setShowPassword] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
+  const [password, setPassword] = useState("")
+  const [confirm, setConfirm] = useState("")
   const [current, setCurrent] = useState(0)
   const [animating, setAnimating] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
@@ -64,6 +74,8 @@ export default function Login() {
     return () => clearInterval(timer)
   }, [advance, isPaused])
 
+  const passwordsMatch = confirm.length > 0 && password === confirm
+
   const quote = QUOTES[current]
 
   return (
@@ -85,7 +97,6 @@ export default function Login() {
         <div className="flex flex-col gap-6">
           <div className="w-12 h-1 bg-gradient-to-r from-cyan-400 to-transparent rounded-full" />
 
-          {/* Animated quote */}
           <div
             className="transition-all duration-300"
             style={{
@@ -145,9 +156,9 @@ export default function Login() {
 
           {/* Header */}
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-white">Sign in</h2>
+            <h2 className="text-2xl font-bold text-white">Create account</h2>
             <p className="text-zinc-400 mt-2 text-sm">
-              Enter your credentials to access the dashboard
+              Get started for free — no credit card required
             </p>
           </div>
 
@@ -181,6 +192,17 @@ export default function Login() {
           {/* Form fields */}
           <div className="flex flex-col gap-4">
 
+            {/* Full name */}
+            <div className="flex flex-col gap-2">
+              <Label className="text-zinc-400 text-sm">Full name</Label>
+              <Input
+                type="text"
+                placeholder="John Doe"
+                className="bg-zinc-900 border-white/10 text-white placeholder:text-zinc-600 focus-visible:ring-cyan-400 focus-visible:border-cyan-400"
+              />
+            </div>
+
+            {/* Email */}
             <div className="flex flex-col gap-2">
               <Label className="text-zinc-400 text-sm">Email</Label>
               <Input
@@ -190,20 +212,15 @@ export default function Login() {
               />
             </div>
 
+            {/* Password */}
             <div className="flex flex-col gap-2">
-              <div className="flex items-center justify-between">
-                <Label className="text-zinc-400 text-sm">Password</Label>
-                <Link
-                  href="/auth/recover"
-                  className="text-xs text-cyan-400 hover:text-cyan-300 transition"
-                >
-                  Forgot your password?
-                </Link>
-              </div>
+              <Label className="text-zinc-400 text-sm">Password</Label>
               <div className="relative">
                 <Input
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="bg-zinc-900 border-white/10 text-white placeholder:text-zinc-600 focus-visible:ring-cyan-400 focus-visible:border-cyan-400 pr-10"
                 />
                 <button
@@ -215,28 +232,99 @@ export default function Login() {
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
+
+              {/* Password strength rules */}
+              {password.length > 0 && (
+                <div className="flex flex-col gap-1.5 mt-1">
+                  {PASSWORD_RULES.map((rule) => {
+                    const passed = rule.test(password)
+                    return (
+                      <div key={rule.label} className="flex items-center gap-2">
+                        <div
+                          className={`w-3.5 h-3.5 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-200 ${
+                            passed ? "bg-cyan-500/20" : "bg-white/5"
+                          }`}
+                        >
+                          {passed ? (
+                            <Check size={9} className="text-cyan-400" />
+                          ) : (
+                            <X size={9} className="text-zinc-600" />
+                          )}
+                        </div>
+                        <span
+                          className={`text-xs transition-colors duration-200 ${
+                            passed ? "text-zinc-400" : "text-zinc-600"
+                          }`}
+                        >
+                          {rule.label}
+                        </span>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
             </div>
 
-            <div className="flex items-center gap-2">
+            {/* Confirm password */}
+            <div className="flex flex-col gap-2">
+              <Label className="text-zinc-400 text-sm">Confirm password</Label>
+              <div className="relative">
+                <Input
+                  type={showConfirm ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={confirm}
+                  onChange={(e) => setConfirm(e.target.value)}
+                  className={`bg-zinc-900 border-white/10 text-white placeholder:text-zinc-600 focus-visible:ring-cyan-400 focus-visible:border-cyan-400 pr-10 transition-colors ${
+                    confirm.length > 0
+                      ? passwordsMatch
+                        ? "border-cyan-500/50"
+                        : "border-red-500/50"
+                      : ""
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition"
+                  aria-label={showConfirm ? "Hide password" : "Show password"}
+                >
+                  {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+              {confirm.length > 0 && !passwordsMatch && (
+                <p className="text-xs text-red-400">Passwords don&apos;t match</p>
+              )}
+            </div>
+
+            {/* Terms */}
+            <div className="flex items-start gap-2 mt-1">
               <Checkbox
-                id="remember"
-                className="border-white/20 data-[state=checked]:bg-cyan-500 data-[state=checked]:border-cyan-500"
+                id="terms"
+                className="border-white/20 data-[state=checked]:bg-cyan-500 data-[state=checked]:border-cyan-500 mt-0.5"
               />
-              <label htmlFor="remember" className="text-sm text-zinc-400 cursor-pointer">
-                Remember me for 30 days
+              <label htmlFor="terms" className="text-sm text-zinc-400 cursor-pointer leading-relaxed">
+                I agree to the{" "}
+                <Link href="/terms" className="text-cyan-400 hover:text-cyan-300 transition">
+                  Terms of Service
+                </Link>{" "}
+                and{" "}
+                <Link href="/privacy" className="text-cyan-400 hover:text-cyan-300 transition">
+                  Privacy Policy
+                </Link>
               </label>
             </div>
 
+            {/* CTA */}
             <Button className="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-semibold mt-2 h-11">
-              Sign in
+              Create account
             </Button>
 
           </div>
 
           <p className="text-center text-sm text-zinc-500 mt-6">
-            Don&apos;t have an account?{" "}
-            <Link href="/auth/register" className="text-cyan-400 hover:text-cyan-300 transition font-medium">
-              Create one free
+            Already have an account?{" "}
+            <Link href="/auth/login" className="text-cyan-400 hover:text-cyan-300 transition font-medium">
+              Sign in
             </Link>
           </p>
 

@@ -24,7 +24,7 @@ const navLinks = [
   { href: "/", icon: LayoutDashboard, label: "Dashboard" },
   { href: "/Usuarios", icon: Users, label: "Usuarios" },
   { href: "/billing", icon: CreditCard, label: "Billing" },
-  { href: "/settings", icon: Settings, label: "Configuración" },
+  { href: "/settings/profile", icon: Settings, label: "Configuración" },
 ]
 
 const notificaciones = [
